@@ -1,0 +1,208 @@
+PRACTICAL 3 — PIPELINE
+✅ Pipeline Script (inside Jenkins)
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building project'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing project'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying project'
+            }
+        }
+    }
+}
+✅ Pipeline from GitHub
+Definition:
+Pipeline script from SCM
+
+SCM:
+Git
+
+Repo:
+https://github.com/<username>/<repo>.git
+
+Branch:
+*/main
+
+Script Path:
+Jenkinsfile
+📄 Jenkinsfile (GitHub)
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone') {
+            steps {
+                echo 'Cloning repository...'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building project...'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing project...'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying project...'
+            }
+        }
+    }
+}
+🧪 PRACTICAL 4A / 4B — SCHEDULING
+Enable:
+Build periodically
+Cron (choose one)
+* * * * *
+H/5 * * * *
+0 10 * * *
+H * * * *
+Build → Execute Shell
+echo "Scheduled Build Running"
+date
+🧪 PRACTICAL 4C — PARAMETERIZED JOB
+✅ Freestyle
+Enable:
+This project is parameterized
+
+Parameter:
+Name = NAME
+Default = Student
+Build → Execute Shell
+echo "Hello $NAME"
+echo "Build triggered by $NAME"
+date
+✅ Parameterized Pipeline
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'NAME', defaultValue: 'Student', description: 'Enter name')
+    }
+
+    triggers {
+        cron('H/2 * * * *')
+    }
+
+    stages {
+        stage('Greet') {
+            steps {
+                echo "Hello ${params.NAME}"
+            }
+        }
+
+        stage('File Creation') {
+            steps {
+                sh '''
+                echo "Hello ${NAME}" > message.txt
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            archiveArtifacts artifacts: 'message.txt'
+        }
+    }
+}
+🧪 PRACTICAL 5A — MAVEN
+Git Repo:
+https://github.com/<username>/maven-project.git
+Build Step
+Invoke top-level Maven targets
+Goals
+clean install
+
+OR
+
+clean test package
+📄 pom.xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.demo</groupId>
+    <artifactId>jenkins-demo</artifactId>
+    <version>1.0</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+🧪 PRACTICAL 5B — ANT
+Git Repo:
+https://github.com/<username>/ant-project.git
+Build Step
+Invoke Ant
+Target
+build
+📄 build.xml
+<project name="AntDemo" default="compile" basedir=".">
+
+    <target name="compile">
+        <echo message="Compiling project using Ant..." />
+    </target>
+
+    <target name="run">
+        <echo message="Running project..." />
+    </target>
+
+</project>
+🧪 PRACTICAL 6 — DOCKER
+Install
+sudo apt install docker.io
+Pull Image
+docker pull ubuntu
+Run Container
+docker run -it ubuntu
+Create File
+echo "Hello from Docker" > file.txt
+cat file.txt
+List Containers
+docker ps
+docker ps -a
+Stop
+docker stop <container_id>
+Remove
+docker rm <container_id>
+📄 Dockerfile
+FROM ubuntu
+
+RUN echo "Hello from Docker Image" > /file.txt
+
+CMD ["cat", "/file.txt"]
+Build Image
+docker build -t myimage .
+Run Image
+docker run myimage
+🌐 OPTIONAL (HTML PROJECT)
+index.html
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Hello from Jenkins</h1>
+</body>
+</html>
